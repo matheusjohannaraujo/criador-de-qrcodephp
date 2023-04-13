@@ -40,10 +40,17 @@ if (!file_exists($autoload)) {
 }
 
 if (file_exists($autoload)) {
-	require_once $autoload;
-	require_once __DIR__ . "/lib/config.php";
-	require_once __DIR__ . "/app/web.php";
+	try {
+		require_once $autoload;
+		require_once __DIR__ . "/lib/config.php";
+		require_once __DIR__ . "/app/web.php";
+	} catch (\Throwable $th) {
+		log_create($th);
+		throw $th;
+	}
 } else {
 	require_once __DIR__ . "/lib/DataManager.php";
-	die("<br><center># The `" . \Lib\DataManager::path($autoload) . "` not found. If you are reading this message, open a command prompt inside the project folder and run the command below:<hr><h1><b>composer update</b></h1></center>");
+	echo "<br><center># The `" . \Lib\DataManager::path($autoload) . "` not found. If you are reading this message, open a command prompt inside the project folder and run the command below:<hr><h1><b>composer update</b></h1></center><br>";
+	phpinfo();
+	die();
 }

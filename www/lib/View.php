@@ -145,7 +145,7 @@ class View
         $location = $_FILE;
         $_FILE = $this->locationFile($_FILE);
         if (!$_FILE) {
-            return null;
+            throw new \Exception("File view (" . $location . ") not found.");
         }
         $isBlade = strpos($_FILE, ".blade");
         $isBlade = ($isBlade !== false ? true : false);
@@ -156,6 +156,7 @@ class View
                 $blade->pipeEnable = true;
                 return $blade->run(str_replace("/", "\\", $location), $_ARGS);
             } catch (\Throwable $th) {
+                log_create($th);
                 dumpl("BladeOne Error", $th);
             }
         }
@@ -188,6 +189,7 @@ class View
                 $this->views = array_values($this->views);
             }
         } catch (\Throwable $e) {
+            log_create($e);
             ob_get_clean();
             ob_start();
             dumpl(["message" => $e->getMessage(), "line" => $e->getLine(), "file" => $e->getFile()]);

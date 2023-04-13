@@ -9,6 +9,53 @@ use Lib\Session;
 use Lib\Redirect;
 use Lib\DataManager;
 
+function log_exception($e, string $dateTime) {    
+    $logMessage = "";
+    if ($e instanceof \Throwable || $e instanceof \Exception) {
+        // Obtem a mensagem da exceção e outras informações relevantes
+        $message = $e->getMessage();
+        $file = $e->getFile();
+        $line = $e->getLine();
+        $trace = $e->getTraceAsString();        
+        // Monta a mensagem de log
+        $logMessage = "[$dateTime] Error: $message in $file line $line\n";
+        $logMessage .= "Trace: $trace\n";
+    }
+    return $logMessage;
+}
+
+function log_create($data, string $name = null)
+{
+    $dateTime = date('Y-m-d H:i:s');
+    $logMessage = log_exception($data, $dateTime);
+    if (is_object($data)) {
+        $data = object_to_array($data);
+    }
+    if (is_array($data) || !is_string($data)) {
+        $data = json_encode($data);
+    }
+    $logMessage .= "[$dateTime] Data: " . $data . "\r\n";
+    if ($name !== null) {
+        $logMessage .= "Marker: $name\r\n";
+    }
+    $file = folder_storage("log.txt");
+    return DataManager::fileAppend($file, $logMessage . "\r\n");
+}
+
+function simple_redis()
+{
+    $sr = new \Lib\SimpleRedis;
+    $sr->open();
+    return $sr;
+}
+
+function simple_rabbitmq()
+{
+    $srmq = new \Lib\SimpleRabbitMQ;
+    $srmq->open();
+    return $srmq;
+}
+
 /**
  * 
  * **Function -> helper**
@@ -1243,5 +1290,25 @@ function callClassMethod(array $returnVerifyClassMethod, array $argsMethod = [],
         return (new $class(...$argsConstructor))->$method(...$argsMethod);
     } else if ($returnVerifyClassMethod["carac"] == "::") {
         return ($class)::$method(...$argsMethod);
+    }
+}
+
+function command_exec(string $nameFile, array $params = [])
+{
+    $folderCommandName = input_env("NAME_FOLDER_COMMANDS");
+    $baseDir = realpath(__DIR__ . "/../");
+    $file = DataManager::path($baseDir . "/app/${folderCommandName}/${nameFile}.php");
+    if (DataManager::exist($file) == 'FILE') {
+        (function() use ($file, $params) {
+            try {
+                require_once $file;
+                workWait(function() { usleep(1); });                
+            } catch (\Throwable $th) {
+                log_create($th);
+                dumpl($th);
+            }
+        })();
+    } else {
+        echo PHP_EOL, "Command file not found: ", $file, PHP_EOL;
     }
 }

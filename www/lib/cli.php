@@ -12,7 +12,7 @@ define("__BASE_DIR__", $BASE_DIR);
 
 function fun_routes(string $method = "")
 {
-    $routes = file_get_contents("http://localhost/"  . pathinfo(__BASE_DIR__)["basename"] . "/routes/all/json/$method");
+    $routes = file_get_contents(input_env("APP_URL") . "routes/all/json/$method");
     $routes = (array) json_decode($routes, true);
     foreach ($routes as $key => $route) {
         echo "---------------------------------------------------------------------";
@@ -26,7 +26,7 @@ function fun_routes(string $method = "")
             "\r\n CACHE: " . ($route["cache"] > 0 ? $route["cache"] . "s" : ($route["cache"] == 0 ? "infinite" : "disabled")) . "\r\n",
         "yellow", "black");
     }
-    echo "---------------------------------------------------------------------";
+    echo "---------------------------------------------------------------------", PHP_EOL;
 }
 
 function fun_test_route(string $name, string $test_md5, string $uri)
@@ -38,35 +38,32 @@ function fun_test_route(string $name, string $test_md5, string $uri)
 
 function fun_test_routes()
 {
-    $baseDomain = "http://localhost/" . pathinfo(__BASE_DIR__)["basename"];
+    $baseDomain = site_url();
     echo "\r\n";
-    fun_test_route("/.env", "d41d8cd98f00b204e9800998ecf8427e", $baseDomain . "/.env");
+    fun_test_route("/.env", "d41d8cd98f00b204e9800998ecf8427e", $baseDomain . ".env");
     echo "\r\n";
-    fun_test_route("/storage/text.txt", "d41d8cd98f00b204e9800998ecf8427e", $baseDomain . "/storage/text.txt");
+    fun_test_route("/storage/text.txt", "d41d8cd98f00b204e9800998ecf8427e", $baseDomain . "storage/text.txt");
     echo "\r\n";
-    fun_test_route("/js/index.js", "1f28a6e549918674d6dc814c2cc87480", $baseDomain . "/js/index.js");
+    fun_test_route("/js/index.js", "6c137fc4b54929449be0902a208c84ac", $baseDomain . "js/index.js");
     echo "\r\n";
-    fun_test_route("/public/js/index.js", "1f28a6e549918674d6dc814c2cc87480", $baseDomain . "/public/js/index.js");
+    fun_test_route("/public/js/index.js", "6c137fc4b54929449be0902a208c84ac", $baseDomain . "public/js/index.js");
     echo "\r\n";
-    fun_test_route("/", "6e59d232c0e2b99953af7e07a3dcf469", $baseDomain . "/");
+    fun_test_route("/", "9d07452d7546c50c1e7148f9768755e1", $baseDomain);
     echo "\r\n";
-    fun_test_route("/template", "a617a1a108e1501398baec11cdcfc947", $baseDomain . "/template");
+    fun_test_route("/template", "3f8becb706c82ee299cdc91619c4700d", $baseDomain . "template");
     echo "\r\n";
-    fun_test_route("/json", "c372e4a0e7030dcc334c53dbe74e95f7", $baseDomain . "/json");
+    fun_test_route("/json", "48897a19a821580ff2d187c7d3af552f", $baseDomain . "json");
     echo "\r\n";
-    fun_test_route("/auth", "c7b55c93fbffa43912d8c0a46bf72ee1", $baseDomain . "/auth");
+    fun_test_route("/math/add/3/5", "f07ec6620f6e1893f5babbd51829ba7d", $baseDomain . "math/add/3/5");
     echo "\r\n";
-    fun_test_route("/jwt", "4ac340b1ea55ad5426f0fd9335b98bd1", $baseDomain . "/jwt");
+    fun_test_route("/api/v1/text", "75e8c9b8c1a48bdb1fb5f72ca5ffa882", $baseDomain . "api/v1/text");
     echo "\r\n";
-    fun_test_route("/math/add/3/5", "f07ec6620f6e1893f5babbd51829ba7d", $baseDomain . "/math/add/3/5");
+    fun_test_route("/api/v1/video", "aa08e10eb9b3c8424429cf15fe8e2fe6", $baseDomain . "api/v1/video");
     echo "\r\n";
-    fun_test_route("/api/v1/text", "52c761fef871620b5f6c537552671825", $baseDomain . "/api/v1/text");
+    fun_test_route("/api/v1/video/stream", "aa08e10eb9b3c8424429cf15fe8e2fe6", $baseDomain . "api/v1/video/stream");
     echo "\r\n";
-    fun_test_route("/api/v1/video", "aa08e10eb9b3c8424429cf15fe8e2fe6", $baseDomain . "/api/v1/video");
+    fun_test_route("/contact", "d31ac1c5f7c3abafb1b31640854db673", $baseDomain . "contact");
     echo "\r\n";
-    fun_test_route("/api/v1/video/stream", "aa08e10eb9b3c8424429cf15fe8e2fe6", $baseDomain . "/api/v1/video/stream");
-    echo "\r\n";
-    fun_test_route("/contact", "41cdf995d47aa5229674094d39fa7788", $baseDomain . "/contact");
 }
 
 function fun_create_app_file(string $class, string $content, string $pathFile)
@@ -437,6 +434,7 @@ function fun_clean_simple_mvcs()
     $folderModelName = input_env("NAME_FOLDER_MODELS");
     $folderHelperName = input_env("NAME_FOLDER_HELPERS");
     $folderSchemaName = input_env("NAME_FOLDER_SCHEMAS");
+    $folderCommandName = input_env("NAME_FOLDER_COMMANDS");
     $folderServiceName = input_env("NAME_FOLDER_SERVICES");
     $folderControllerName = input_env("NAME_FOLDER_CONTROLLERS");
     $folderMiddlewareName = input_env("NAME_FOLDER_MIDDLEWARES");
@@ -452,6 +450,8 @@ function fun_clean_simple_mvcs()
     fun_folder_denied($basedir . "${folderMiddlewareName}/");
     DataManager::folderCreate($basedir . "${folderModelName}");
     fun_folder_denied($basedir . "${folderModelName}/");
+    DataManager::folderCreate($basedir . "${folderCommandName}");
+    fun_folder_denied($basedir . "${folderCommandName}/");
     DataManager::folderCreate($basedir . "${folderServiceName}");
     fun_folder_denied($basedir . "${folderServiceName}/");
     DataManager::folderCreate($basedir . "${folderViewName}");
@@ -547,7 +547,7 @@ function fun_update_project()
     /*if (DataManager::exist($folderActual . ".git") == "FOLDER") {        
         exit(shell_exec("cd $folderActual && git pull"));
     }*/
-    $folderUpdate = DataManager::path($folderActual . "makemvcss-master/");
+    $folderUpdate = DataManager::path($folderActual . "continuum-master/www/");
     echo "\r\n";
     echo cli_text_color(" Dir actual: " . $folderActual);
     echo "\r\n";
@@ -555,9 +555,9 @@ function fun_update_project()
     echo "\r\n";
     echo cli_text_color(" Download . . .", "cyan");
     echo "\r\n";
-    $link = "https://github.com/matheusjohannaraujo/makemvcss/archive/master.zip";
+    $link = "https://github.com/matheusjohannaraujo/continuum/archive/master.zip";
     $zip = file_get_contents($link);
-    $zipName = "makemvcss-master.zip";
+    $zipName = "continuum-master.zip";
     file_put_contents($folderActual . $zipName, $zip);
 
     DataManager::zipExtract($folderActual . $zipName, $folderActual);
@@ -566,7 +566,7 @@ function fun_update_project()
     DataManager::delete($folderUpdate . "app/");
     DataManager::delete($folderUpdate . "public/");
     DataManager::delete($folderUpdate . "storage/");
-    DataManager::delete($folderUpdate . "db_makemvcss.sqlite");
+    DataManager::delete($folderUpdate . "database.sqlite");
     DataManager::delete($folderUpdate . "composer.lock");
     DataManager::copy($folderActual . "app/", $folderUpdate . "app/");
     DataManager::copy($folderActual . "public/", $folderUpdate . "public/");
@@ -575,9 +575,11 @@ function fun_update_project()
     DataManager::copy($folderActual . ".gitignore", $folderUpdate . ".gitignore_old");
     DataManager::copy($folderActual . "composer.json", $folderUpdate . "composer_old.json");
 
-    $folderUpdateFinal = $folderActual . "../" . pathinfo($folderActual)["basename"] . "_" . date("Y.m.d_H.i.s") . "/";
+    $folderUpdateFinal = $folderActual . "../" . pathinfo($folderActual)["basename"] . "_" . date("Y_m_d_H_i_s") . "/";
 
     DataManager::move($folderUpdate, $folderUpdateFinal);
+
+    DataManager::delete(DataManager::path($folderActual . "continuum-master/"));
 
     echo cli_text_color(" Dir updated: " . $folderUpdateFinal);
 }
@@ -589,76 +591,79 @@ function fun_list_commands()
     $folderHelperName = input_env("NAME_FOLDER_HELPERS");
     $folderSchemaName = input_env("NAME_FOLDER_SCHEMAS");
     $folderServiceName = input_env("NAME_FOLDER_SERVICES");
+    $folderCommandName = input_env("NAME_FOLDER_COMMANDS");
     $folderControllerName = input_env("NAME_FOLDER_CONTROLLERS");
     $folderMiddlewareName = input_env("NAME_FOLDER_MIDDLEWARES");
     $version_actual = input_env("VERSION", "very old");
-    $env = new ENV;    
-    $env->read("https://raw.githubusercontent.com/matheusjohannaraujo/makemvcss/master/.env.example");
+    $env = new ENV;
+    $env->read("https://raw.githubusercontent.com/matheusjohannaraujo/continuum/master/www/.env.example");
     $version_latest = $env->get("VERSION", "not found");
     echo "
- ###################################################################################################################
+ ###################################################################################################
  #
- # " . cli_text_color("MakeMVCSS - A simple and complete PHP framework, thought and designed by Matheus Johann Araújo", "blue") . "
+ # " . cli_text_color("Continuum - A simple and complete PHP framework, thought and designed by Matheus Johann Araújo", "blue") . "
  #
- # -----------------------------------------------------------------------------------------------------------------  
+ # -------------------------------------------------------------------------------------------------
  #
- # The local version of the MakeMVCSS framework is " . cli_text_color("`$version_actual`", "red") . " and the remote version is " . cli_text_color("`$version_latest`") . "
+ # The local version of the Continuum framework is " . cli_text_color("`$version_actual`", "red") . " and the remote version is " . cli_text_color("`$version_latest`") . "
  #
  # Version: " . cli_text_color("`$version_actual`", "red") . " -> " . cli_text_color("`$version_latest`") . "
  #
  # To update the core of the framework, use the command " . cli_text_color("`php adm update`", "yellow") . "
  #
- ###################################################################################################################
+ ###################################################################################################
  " . cli_text_color("
- COMMAND COMPLETE        | COMMAND MINIFIED   | DESCRIPTION", "purple") . "
- -------------------------------------------------------------------------------------------------------------------
- php adm help            | php adm h          | List all commands
- -------------------------------------------------------------------------------------------------------------------
- php adm clean           | php adm c          | Clears the project, leaving only the default settings
- -------------------------------------------------------------------------------------------------------------------
- php adm server          | php adm s:80       | Start a web server on port 80
- -------------------------------------------------------------------------------------------------------------------
- php adm controller Test | php adm c Test     | Creates a file inside the folder \"app/${folderControllerName}/TestController.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm middleware Test | php adm mi Test    | Creates a file inside the folder \"app/${folderMiddlewareName}/Test.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm model Test      | php adm m Test     | Creates a file inside the folder \"app/${folderModelName}/Test.php\"
-                                              | and another one in \"app/${folderSchemaName}/tests_capsule.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm database Test   | php adm d Test     | Run the Schema file (Table) \"app/${folderSchemaName}/tests_capsule.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm database --all  | php adm d -a       | Run all schema files (tables) in the \"app/${folderSchemaName}\" folder
- -------------------------------------------------------------------------------------------------------------------
- php adm service Test    | php adm s Test     | Creates a file inside the folder \"app/${folderServiceName}/TestService.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm helper test     | php adm h test     | Creates a file inside the folder \"app/${folderHelperName}/test.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm view test       | php adm v test     | Creates a file inside the folder \"app/${folderViewName}/test.php\"
- -------------------------------------------------------------------------------------------------------------------
- php adm update          | php adm u          | Updates the core framework
- -------------------------------------------------------------------------------------------------------------------
- php adm test            | php adm t          | Testing the default routes
- -------------------------------------------------------------------------------------------------------------------
- php adm zip             | php adm z          | Zipping files and folders from the `vendor` folder
- -------------------------------------------------------------------------------------------------------------------
- php adm unzip           | php adm uz         | Unzipping the zip files from the `vendor` folder
- -------------------------------------------------------------------------------------------------------------------
- php adm nocache         | php adm nc         | Clears the folder located in `storage/cache/`
- -------------------------------------------------------------------------------------------------------------------
- php adm route           | php adm r          | Listing existing routes and listing existing routes by http verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:get       | php adm r:get      | Lists existing routes by the http GET verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:post      | php adm r:post     | Lists existing routes by the http POST verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:put       | php adm r:put      | Lists existing routes by the http PUT verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:patch     | php adm r:patch    | Lists existing routes by the http PATCH verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:options   | php adm r:options  | Lists existing routes by the http OPTIONS verb
- -------------------------------------------------------------------------------------------------------------------
- php adm route:delete    | php adm r:delete   | Lists existing routes by the http DELETE verb  
-";
+ COMMAND COMPLETE        | DESCRIPTION", "purple") . "
+ ---------------------------------------------------------------------------------------------------
+ php adm help            | List all commands
+ ---------------------------------------------------------------------------------------------------
+ php adm clean           | Clears the project, leaving only the default settings
+ ---------------------------------------------------------------------------------------------------
+ php adm server          | Start a web server on port 80
+ ---------------------------------------------------------------------------------------------------
+ php adm controller Test | Creates a file inside the folder \"app/${folderControllerName}/TestController.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm command test    | Run the command file inside the folder \"app/${folderCommandName}/test.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm middleware Test | Creates a file inside the folder \"app/${folderMiddlewareName}/Test.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm model Test      | Creates a file inside the folder \"app/${folderModelName}/Test.php\"
+                           and another one in \"app/${folderSchemaName}/tests_capsule.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm database Test   | Run the Schema file (Table) \"app/${folderSchemaName}/tests_capsule.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm database --all  | Run all schema files (tables) in the \"app/${folderSchemaName}\" folder
+ ---------------------------------------------------------------------------------------------------
+ php adm service Test    | Creates a file inside the folder \"app/${folderServiceName}/TestService.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm helper test     | Creates a file inside the folder \"app/${folderHelperName}/test.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm view test       | Creates a file inside the folder \"app/${folderViewName}/test.php\"
+ ---------------------------------------------------------------------------------------------------
+ php adm update          | Updates the core framework
+ ---------------------------------------------------------------------------------------------------
+ php adm test            | Testing the default routes
+ ---------------------------------------------------------------------------------------------------
+ php adm zip             | Zipping files and folders from the `vendor` folder
+ ---------------------------------------------------------------------------------------------------
+ php adm unzip           | Unzipping the zip files from the `vendor` folder
+ ---------------------------------------------------------------------------------------------------
+ php adm nocache         | Clears the folder located in `storage/cache/`
+ ---------------------------------------------------------------------------------------------------
+ php adm route           | Listing existing routes and listing existing routes by http verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:get       | Lists existing routes by the http GET verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:post      | Lists existing routes by the http POST verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:put       | Lists existing routes by the http PUT verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:patch     | Lists existing routes by the http PATCH verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:options   | Lists existing routes by the http OPTIONS verb
+ ---------------------------------------------------------------------------------------------------
+ php adm route:delete    | Lists existing routes by the http DELETE verb  
+", PHP_EOL;
 }
 
 function fun_apply_database(string $nameFile)
@@ -678,42 +683,122 @@ function fun_no_cache()
     echo cli_text_color("\r\n Clean!\r\n");
 }
 
+function fun_run_command(string $nameFile, $params = false)
+{
+    if ($params === false) {
+        $params = [];
+    } else if (!is_array($params)) {
+        $params = [$params];
+    }
+    $folderCommandName = input_env("NAME_FOLDER_COMMANDS");
+    $file = DataManager::path(__BASE_DIR__ . "/app/${folderCommandName}/${nameFile}.php");    
+    if (DataManager::exist($file) == 'FILE') {
+        (function() use ($file, $params) {
+            try {
+                require_once realpath(__DIR__ . "/../vendor/autoload.php");
+                require_once realpath(__DIR__ . "/config.php");
+                require_once $file;
+                $count = workWait(function() { usleep(1); });
+                echo PHP_EOL, "Meter: ";
+                dumpl(\Lib\Meter::stop());
+                if ($count > 0) {
+                    echo PHP_EOL, "workRun has been run ${count} times", PHP_EOL;
+                }
+                die;
+            } catch (\Throwable $th) {
+                log_create($th);
+                dumpd($th);
+            }
+        })();
+    } else {
+        echo PHP_EOL, "Command file not found: ", $file, PHP_EOL;
+    }
+}
+
+if(!function_exists("readline")) {
+    function readline($prompt = null) {
+        if($prompt){
+            echo $prompt;
+        }
+        $fp = fopen("php://stdin","r");
+        $line = rtrim(fgets($fp, 1024));
+        return $line;
+    }
+}
+
+function confirmation_y_or_n(bool $auto_confirm = false)
+{
+    $y_or_n = "N";
+    if (!$auto_confirm) {
+        echo "\r\n####################################################";
+        echo "\r\n# Confirm with ";
+        echo cli_text_color("`YES`");
+        echo " or ";
+        echo cli_text_color("`Y`");
+        echo " to continue (default is ";
+        echo cli_text_color("`NOT`", "cyan");
+        echo " or ";
+        echo cli_text_color("`N`", "cyan");
+        echo "): ";
+        $y_or_n = mb_strtoupper(readline());
+    } else {
+        $y_or_n = "Y";
+    }
+    if ($y_or_n !== "Y" && $y_or_n !== "YES") {
+        echo "# ";
+        echo cli_text_color("Operation cancelled.", "cyan");
+        echo "\r\n####################################################\r\n";
+        die();
+    } else {
+        echo "# ";
+        echo cli_text_color("Operation confirmed.");
+        echo "\r\n####################################################\r\n";
+    }
+}
+
 function fun_switch_app_options(string $cmd, string $nameFile, $require = false)
 {
+    $auto_confirm = false;
+    if (
+        (is_string($require) && $require !== "--yes" && $require !== "-y") ||
+        (is_array($require) && !in_array("--yes", $require) && !in_array("-y", $require))
+    ) {
+        $auto_confirm = false;
+    } else {
+        $auto_confirm = true;
+    }
+    confirmation_y_or_n($auto_confirm);
     switch ($cmd) {
         case "controller":
-        case "c":
             fun_create_controller($nameFile, !$require);
             break;
         case "middleware":
-        case "mi":
             fun_create_middleware($nameFile, !$require);
             break;
         case "service":
-        case "s":
             fun_create_service($nameFile, $require);
             break;
         case "model":
-        case "m":
             fun_create_model($nameFile, $require);
             break;
         case "helper":
-        case "h":
             fun_create_helper($nameFile, $require);
             break;
         case "view":
-        case "v":
             fun_create_view($nameFile);
             break;
         case "database":
-        case "d":
             fun_apply_database($nameFile);
+            break;
+        case "command":
+            fun_run_command($nameFile, $require);
             break;
     }
 }
 
 function fun_switch_other_options(string $cmd)
 {
+    confirmation_y_or_n();
     $attr = 80;
     if (preg_match("/:/", $cmd)) {
         $arr = explode(':', $cmd);
@@ -724,34 +809,27 @@ function fun_switch_other_options(string $cmd)
     }
     switch ($cmd) {
         case "server":
-        case "s":
             fun_init_server($attr);
             break;
         case "test":
-        case "t":
             fun_test_routes();
             break;
         case "route";
-        case "r":
             if ($attr == 80) {
                 $attr = "";
             }
             fun_routes($attr);
             break;
         case "clean":
-        case "c":
             fun_clean_simple_mvcs();
             break;
         case "help":
-        case "h":
             fun_list_commands();
             break;
         case "update":
-        case "u":
             fun_update_project();
             break;
         case "nocache":
-        case "nc":
             fun_no_cache();
             break;
     }

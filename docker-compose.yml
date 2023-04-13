@@ -1,0 +1,21 @@
+version: '3.3'
+services:
+  qrcode-web:
+#    image: tomsik68/xampp:8
+    build: .
+    restart: always
+#    command: sleep 3800
+    ports:
+      - 8080:80
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+#          cpus: '1.0'
+    volumes:
+      - ./www/:/opt/lampp/htdocs/
+
+networks:
+  default:
+    external: true
+    name: default-network

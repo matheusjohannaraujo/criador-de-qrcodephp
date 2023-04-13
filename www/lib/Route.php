@@ -332,6 +332,7 @@ class Route
                                 try {
                                     return (new $Controller)->$Method(...array_values(self::$in->paramArg()));
                                 } catch (\Throwable $e) {
+                                    log_create($e);
                                     dumpd($e->getMessage());
                                 }
                             })($Controller, $Method);
@@ -341,7 +342,8 @@ class Route
                     } else {
                         $result = view($action, self::$in);
                     }
-                }                
+                }
+                workWait(function() { usleep(1); });
                 if ($result instanceof Route) {
                     $result->out->go();
                 } else if ($result instanceof Response) {
@@ -354,6 +356,7 @@ class Route
                 return true;
             }
         } catch (\Throwable $e) {
+            log_create($e);
             dumpd($e);
         }
         return false;
@@ -625,6 +628,13 @@ class Route
 
     public static function on()
     {
+        if (input_env("ENV") === "development") {
+            self::get("/swagger-php-open-api", function () {
+                $openapi = \OpenApi\Generator::scan(['./app']);
+                header('Content-Type: application/json');
+                die($openapi->toJson());
+            });
+        }
         self::post("/thread_http", function() {
             $aes = new AES_256;
             $script = input_post("script", "");
@@ -634,7 +644,7 @@ class Route
             $script = $aes->encrypt_cbc($script);
             $script = base64_encode($script);
             return $script;
-        })::jwt(true);
+        })::jwt(true);        
         self::any("/page_message/{status_code:int}", function(int $status_code) {
             self::$out->page($status_code);
         });

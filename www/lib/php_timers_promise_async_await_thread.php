@@ -74,7 +74,7 @@ function thread_parallel(
     $jwt->exp(time() + 60);
     $token = $jwt->token();
     if ($thread_http === null) {
-        $thread_http = action("thread_http");
+        $thread_http = defined('CLI') ? input_env("APP_URL") . "thread_http" : action("thread_http");
     }
     foreach ($script as $key => $value) {
         $script[$key] = $aes->encrypt_cbc(serialize_function($value));
@@ -186,6 +186,7 @@ function rpc_thread_parallel(string $script)
         try {
             $returned = unserialize_function($script)();
         } catch (\Throwable $th) {
+            log_create($th);
             var_dump($th);
         }
         $printed = ob_get_clean();
@@ -230,6 +231,7 @@ function async(callable $call, bool $return = true)
                 $resolve($val["response"]);
             });
         }
+        workRun();
     });
 }
 

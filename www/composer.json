@@ -4,15 +4,13 @@
         "opis/closure": "^3.5",
         "laravel/serializable-closure": "^1.1",
         "eftec/bladeone": "^4.5",
-        "ext-curl": "*",
-        "ext-fileinfo": "*",
-        "ext-intl": "*",
-        "ext-gd": "*",
-        "ext-openssl": "*",
-        "ext-ftp": "*",
-        "ext-pdo_sqlite": "*",
-        "ext-pdo_mysql": "*",
-        "ext-pdo_pgsql": "*"
+        "zircote/swagger-php": "^4.4",
+        "illuminate/events": "^8.0",
+        "illuminate/database": "^8.0",
+        "illuminate/support": "^8.0",
+        "ramsey/uuid": "^4.2",
+        "predis/predis": "^2.1",
+        "php-amqplib/php-amqplib": "^2.8"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,29 @@
+body {
+    min-width: 900px;
+    background: #eee;
+}
+
+textarea, select, input, button {
+    cursor: pointer;
+    padding: 7px 8px;
+    border-radius: 3px;
+    border: 1px solid #888;
+    font-weight: bold;
+}
+
+button {
+    transition: 0.5s;
+    background: #fff;
+    box-shadow: 2px 2px 4px #bbb;
+}
+
+button:hover {
+    transition: 0.25s;
+    background: #000;
+    color: #fff;
+    box-shadow: none !important;
+}
+
+#img {
+    border: 1px solid #ccc
+}

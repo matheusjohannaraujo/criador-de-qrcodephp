@@ -1,0 +1,38 @@
+{
+    "require": {
+        "php": ">=7.2.5",
+        "opis/closure": "^3.5",
+        "laravel/serializable-closure": "^1.1",
+        "eftec/bladeone": "^4.5",
+        "ext-curl": "*",
+        "ext-fileinfo": "*",
+        "ext-intl": "*",
+        "ext-gd": "*",
+        "ext-openssl": "*",
+        "ext-ftp": "*",
+        "ext-pdo_sqlite": "*",
+        "ext-pdo_mysql": "*",
+        "ext-pdo_pgsql": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Lib\\" : "lib/",
+            "lib\\" : "lib/",
+            "App\\" : "app/",
+            "app\\" : "app/"
+        },
+        "files": [
+            "app/common.php",
+            "lib/dump.php",
+            "lib/helpers.php",
+            "lib/php_timers_promise_async_await_thread.php"
+        ]
+    },
+    "scripts": {
+        "update-ignore": "composer update --ignore-platform-reqs",
+        "db-require": "composer require --ignore-platform-reqs illuminate/events:\"^8.0\" illuminate/database:\"^8.0\" illuminate/support:\"^8.0\"",
+        "db-remove": "composer remove illuminate/events illuminate/database illuminate/support",
+        "ext-require": "composer require --ignore-platform-reqs ext-curl:* ext-fileinfo:* ext-intl:* ext-gd:* ext-openssl:* ext-ftp:* ext-pdo_sqlite:* ext-pdo_mysql:* ext-pdo_pgsql:*",
+        "ext-remove": "composer remove ext-curl ext-fileinfo ext-intl ext-gd ext-openssl ext-ftp ext-pdo_sqlite ext-pdo_mysql ext-pdo_pgsql"
+    }
+}

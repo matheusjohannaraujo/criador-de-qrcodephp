@@ -1,0 +1,104 @@
+{
+	"info": {
+		"_postman_id": "c506e0f5-182c-4654-89ed-3b32fb8e8a99",
+		"name": "Crie seu QR Code",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/qrcode/create/json",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"text\": \"QRCodeAPI\",\r\n\t\"size\": 200,\r\n\t\"margin\": 10,\r\n\t\"labelText\": \"QRCodeAPI\",\r\n\t\"labelSize\": 12,\r\n\t\"response\": \"image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conectarecifeservicos.recife.pe.gov.br/qrcode/create/json",
+					"protocol": "https",
+					"host": [
+						"conectarecifeservicos",
+						"recife",
+						"pe",
+						"gov",
+						"br"
+					],
+					"path": [
+						"qrcode",
+						"create",
+						"json"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/qrcode/create/params",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"text\": \"QRCodeAPI\",\r\n\t\"size\": 200,\r\n\t\"margin\": 10,\r\n\t\"labelText\": \"QRCodeAPI\",\r\n\t\"labelSize\": 12,\r\n\t\"response\": \"image\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conectarecifeservicos.recife.pe.gov.br/qrcode/create/params?text=QRCodeAPI&size=200&margin=10&labelText=QRCodeAPI&labelSize=12&response=image",
+					"protocol": "https",
+					"host": [
+						"conectarecifeservicos",
+						"recife",
+						"pe",
+						"gov",
+						"br"
+					],
+					"path": [
+						"qrcode",
+						"create",
+						"params"
+					],
+					"query": [
+						{
+							"key": "text",
+							"value": "QRCodeAPI"
+						},
+						{
+							"key": "size",
+							"value": "200"
+						},
+						{
+							"key": "margin",
+							"value": "10"
+						},
+						{
+							"key": "labelText",
+							"value": "QRCodeAPI"
+						},
+						{
+							"key": "labelSize",
+							"value": "12"
+						},
+						{
+							"key": "response",
+							"value": "image"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

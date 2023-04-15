@@ -1,5 +1,5 @@
 window.addEventListener("load", function(){
-    btnGerar.addEventListener("click", function(){
+    btnGerar.addEventListener("click", function() {
         if(texto.value == ""){
             texto.value = "Preencha este campo!"
             texto.style.background = "aqua"
@@ -11,14 +11,7 @@ window.addEventListener("load", function(){
             }, 1500);
             return
         }
-        let tipos = document.querySelectorAll(".tipo")
-        let tipo = "jpeg"
-        if(tipos[0].checked){
-            tipo = "jpeg"
-        }else if(tipos[1].checked){
-            tipo = "png"
-        }
-        let uri = `${window.location.origin}${window.location.pathname}create`
+        let uri = `${window.location.origin}${window.location.pathname}create/json`
         fetch(
             uri,
             {
@@ -29,10 +22,7 @@ window.addEventListener("load", function(){
                 method: "POST",
                 body: JSON.stringify({
                     "text": texto.value,
-                    "redundancy": nivel.value,
-                    "pixelsize": pixels.value,
-                    "mimetype": tipo,
-                    "filename": `imagem_${Math.random()}`
+                    "size": tamanho.value
                 })
             }
         )

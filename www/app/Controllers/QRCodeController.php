@@ -2,71 +2,73 @@
 
 namespace App\Controllers;
 
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
+use Endroid\QrCode\Label\Alignment\LabelAlignmentCenter;
+use Endroid\QrCode\Label\Font\NotoSans;
+use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
+use Endroid\QrCode\Writer\PngWriter;
+
 class QRCodeController
 {
 
-    public function create() :void
+    private function create(string $text, int $size = 200, int $margin = 10, string $labelText = null, int $labelSize = 12, string $response = "image")
     {
-        $text = input_json("text");
-        $redundancy = input_json("redundancy", 1);
-        $pixelsize = input_json("pixelsize", 8);
-        $mimetype = input_json("mimetype", "jpeg");
-        $filename = input_json("filename", md5($text));
-        $this->generateImage($text, $redundancy, $pixelsize, $mimetype, $filename);
+        $result = Builder::create()
+            ->writer(new PngWriter())
+            ->writerOptions([])
+            ->data($text)
+            ->encoding(new Encoding('UTF-8'))
+            ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
+            ->size($size)
+            ->margin($margin)
+            ->roundBlockSizeMode(new RoundBlockSizeModeMargin());
+            /*->logoPath(__DIR__.'/logo.png')*/
+        if ($labelText !== null && $labelText !== "") {
+            $result = $result->labelText($labelText)
+                ->labelFont(new NotoSans($labelSize))
+                ->labelAlignment(new LabelAlignmentCenter());
+        }
+        $result = $result
+            ->validateResult(false)
+            ->build();
+
+        if ($result === null) {
+            return "Falha ao gerar QRCode";
+        }
+
+        if ($response == "image") {
+            header('Content-Type: ' . $result->getMimeType());
+            echo $result->getString();
+            die;
+        }
+
+        if ($response == "string") {
+            return $result->getDataUri();
+        }
     }
 
-    public function generateImage(
-        string $text,
-        int $redundancy,
-        int $pixelsize,
-        string $mimetype,
-        string $filename
-    ) :void {
-        //dumpd($text, $redundancy, $pixelsize, $mimetype, $filename);
-        if ($text == null || strlen($text) > 2000) {
-            exit("TEXT <= 2000 caracteres");
-        }
-        switch ($redundancy) {
-            case 1:
-                $redundancy = "L";
-                break;
-            case 2:
-                $redundancy = "M";
-                break;
-            case 3:
-                $redundancy = "Q";
-                break;
-            case 4:
-                $redundancy = "H";
-                break;
-            default:
-                $redundancy = "L";
-        }
-        if ($pixelsize < 4 || $pixelsize > 48) {
-            $pixelsize = 8;
-        }
-        $mimetype = strtolower($mimetype);
-        $filename = $filename . "." . $mimetype;
-        switch ($pixelsize) {
-            case "jpeg":
-                $mimetype = "J";
-                break;
-            case "png":
-                $mimetype = "P";
-                break;
-            default:
-                $mimetype = "J";
-        }
-        $str = view("qr_img_0.50j/php/qr_img", [
-            "d" => $text,
-            "e" => $redundancy,
-            "s" => $pixelsize,
-            "t" => $mimetype,
-        ]);
-        output()
-            ->name($filename)
-            ->content($str)
-            ->go();
+    public function json()
+    {
+        $text = (string) input_json("text");
+        $size = (int) input_json("size", 200);
+        $margin = (int) input_json("margin", 10);
+        $labelText = (string) input_json("labelText", null);
+        $labelSize = (int) input_json("labelSize", 12);
+        $response = (string) input_json("response", "image");// image | string
+        return $this->create($text, $size, $margin, $labelText, $labelSize, $response);
     }
 
+    public function params()
+    {
+        $text = (string) request()->get("text");
+        $size = (int) request()->get("size", 200);
+        $margin = (int) request()->get("margin", 10);
+        $labelText = (string) request()->get("labelText", null);
+        $labelSize = (int) request()->get("labelSize", 12);
+        $response = (string) request()->get("response", "image");// image | string
+        return $this->create($text, $size, $margin, $labelText, $labelSize, $response);
+    }
+    
 }

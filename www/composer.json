@@ -10,7 +10,9 @@
         "illuminate/support": "^8.0",
         "ramsey/uuid": "^4.2",
         "predis/predis": "^2.1",
-        "php-amqplib/php-amqplib": "^2.8"
+        "php-amqplib/php-amqplib": "^2.8",
+        "endroid/qr-code": "^4.6",
+        "zxing/qr-reader": "^1.2"
     },
     "autoload": {
         "psr-4": {

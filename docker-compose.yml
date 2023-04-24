@@ -1,12 +1,12 @@
 version: '3.3'
 services:
   qrcode-web:
-#    image: tomsik68/xampp:8
+#    image: tomsik68/xampp:7.4.29
     build: .
     restart: always
 #    command: sleep 3800
     ports:
-      - 80:80
+      - 8080:80
     deploy:
       resources:
         limits:

@@ -2,9 +2,9 @@
 
 use Lib\Route;
 
-Route::any("/create/json", "QRCodeController@json")::name("create.json");
+Route::any("/qrcode/create", "QRCodeController@create")::name("qrcode.create");
 
-Route::any("/create/params", "QRCodeController@params")::name("create.params");
+Route::any("/qrcode/read", "QRCodeController@read")::name("qrcode.read");
 
 Route::any("/", "home");
 

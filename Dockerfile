@@ -1,4 +1,4 @@
-FROM tomsik68/xampp:8
+FROM tomsik68/xampp:7.4.29
 
 RUN apt update && apt install htop cron -y
 
